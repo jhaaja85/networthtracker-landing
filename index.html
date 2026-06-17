@@ -7,7 +7,7 @@
 <!-- Primary SEO -->
 <title>Net Worth Tracker — Track Stocks, Crypto, Real Estate & Debt</title>
 <meta name="description" content="Net Worth Tracker is a privacy-first Android app to track your complete financial picture — stocks, ETFs, crypto, real estate, and debt — with real analytics including CAGR, time-to-double, and quarterly PDF reports. One-time €5, no subscription.">
-<meta name="keywords" content="net worth tracker, android net worth app, portfolio tracker, stock tracker, crypto tracker, real estate tracker, CAGR calculator, personal finance app, wealth tracker, Robinhood import">
+<meta name="keywords" content="net worth tracker, android net worth app, portfolio tracker, stock tracker, crypto tracker, real estate tracker, CAGR calculator, personal finance app, wealth tracker, Robinhood import, Nordnet import, Revolut import">
 <meta name="author" content="BC Head Holding">
 <link rel="canonical" href="https://networthtracker.org/">
 
@@ -35,7 +35,7 @@
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Net Worth Tracker",
-  "description": "Privacy-first Android app for tracking your complete net worth across stocks, ETFs, crypto, real estate, and debt. Includes CAGR analytics, quarterly PDF reports, and Robinhood CSV import.",
+  "description": "Privacy-first Android app for tracking your complete net worth across stocks, ETFs, crypto, real estate, and debt. Includes CAGR analytics, quarterly PDF reports, and CSV import for Robinhood, Nordnet, and Revolut.",
   "url": "https://networthtracker.org",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Android",
@@ -55,7 +55,7 @@
     "Cryptocurrency prices via CoinGecko",
     "CAGR and time-to-double analytics",
     "Quarterly PDF reports",
-    "Robinhood CSV import",
+    "CSV import for Robinhood, Nordnet, and Revolut",
     "Multi-currency support",
     "Google Drive backup",
     "Local-first privacy"
@@ -460,6 +460,7 @@
     overflow: hidden;
     border: 1px solid rgba(184, 150, 46, 0.15);
     transition: transform 0.2s, box-shadow 0.2s;
+    cursor: zoom-in;
   }
 
   .screenshot-card:hover {
@@ -606,6 +607,70 @@
     .hero-actions { flex-direction: column; align-items: center; }
     .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
   }
+
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.92);
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    cursor: zoom-out;
+  }
+
+  .lightbox-overlay.active {
+    display: flex;
+  }
+
+  .lightbox-img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    cursor: default;
+  }
+
+  .lightbox-close {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
+    line-height: 1;
+    transition: background 0.2s;
+    z-index: 1001;
+  }
+
+  .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+  .lightbox-label {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.6);
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    border: 1px solid rgba(184,150,46,0.3);
+    white-space: nowrap;
+  }
 </style>
 </head>
 <body>
@@ -730,7 +795,7 @@
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       </div>
       <h3>CSV import</h3>
-      <p>Import your Robinhood/Nordnet/Revolut portfolio via CSV. Get your existing positions loaded instantly without manual entry.</p>
+      <p>Import your portfolio via CSV from Robinhood, Nordnet, and Revolut. Get your existing positions loaded instantly without manual entry.</p>
     </div>
 
     <div class="feature-card">
@@ -828,7 +893,7 @@
       </li>
       <li>
         <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-        Robinhood CSV import
+        CSV import — Robinhood, Nordnet & Revolut
       </li>
       <li>
         <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
@@ -867,5 +932,41 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 </script>
 
+
+<div class="lightbox-overlay" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">×</button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="">
+  <div class="lightbox-label" id="lightbox-label"></div>
+</div>
+
+<script>
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lightbox-img');
+const lbLabel = document.getElementById('lightbox-label');
+const lbClose = document.getElementById('lightbox-close');
+
+document.querySelectorAll('.screenshot-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const img = card.querySelector('img');
+    const label = card.querySelector('.screenshot-card-label');
+    lbImg.src = img.src;
+    lbImg.alt = img.alt;
+    lbLabel.textContent = label ? label.textContent : '';
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+  lbImg.src = '';
+}
+
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+lbClose.addEventListener('click', closeLightbox);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+lbImg.addEventListener('click', e => e.stopPropagation());
+</script>
 </body>
 </html>
