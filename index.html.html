@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Net Worth Tracker — Track your complete financial picture</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #1B4332;
+    --green-mid: #2D6A4F;
+    --green-light: #40916C;
+    --gold: #B8962E;
+    --gold-light: #D4AF50;
+    --cream: #F5F0E8;
+    --cream-dark: #EDE8DF;
+    --text-dark: #0D1F18;
+    --text-muted: #4A6358;
+    --red: #CF4444;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(27, 67, 50, 0.97);
+    backdrop-filter: blur(8px);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .nav-logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--green-mid);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-logo-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav-logo-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--cream);
+    letter-spacing: -0.2px;
+  }
+
+  .nav-cta {
+    background: var(--gold);
+    color: var(--green);
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+
+  .nav-cta:hover { background: var(--gold-light); }
+
+  hero {
+    display: block;
+    background: var(--green);
+    min-height: 100vh;
+    padding: 8rem 2rem 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-lines {
+    position: absolute;
+    inset: 0;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(184, 150, 46, 0.15);
+    border: 1px solid rgba(184, 150, 46, 0.3);
+    border-radius: 100px;
+    padding: 0.35rem 1rem;
+    font-size: 13px;
+    color: var(--gold-light);
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.3px;
+  }
+
+  .hero-eyebrow-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin-bottom: 1.25rem;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: rgba(245, 240, 232, 0.75);
+    max-width: 500px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.65;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold);
+    color: var(--green);
+    padding: 0.85rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  .btn-primary svg { width: 20px; height: 20px; }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--cream);
+    padding: 0.85rem 1.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(245, 240, 232, 0.25);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: rgba(245, 240, 232, 0.5); background: rgba(245, 240, 232, 0.05); }
+
+  .hero-badge {
+    margin-top: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-badge-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(245, 240, 232, 0.6);
+  }
+
+  .hero-badge-item svg { width: 14px; height: 14px; opacity: 0.7; }
+
+  section {
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    font-size: 1rem;
+    color: var(--text-muted);
+    max-width: 520px;
+    line-height: 1.65;
+  }
+
+  .video-section {
+    background: var(--green);
+    padding: 5rem 2rem;
+  }
+
+  .video-section-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .video-section .section-title { color: var(--cream); }
+  .video-section .section-eyebrow { color: var(--gold); }
+  .video-section .section-sub { color: rgba(245, 240, 232, 0.65); margin: 0 auto 2.5rem; }
+
+  .video-thumb-link {
+    display: block;
+    text-decoration: none;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .video-thumb {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(184, 150, 46, 0.3);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
+
+  .video-thumb-link:hover .video-thumb {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(184, 150, 46, 0.6);
+    transform: translateY(-2px);
+  }
+
+  .video-thumb-icon {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--green);
+  }
+
+  .video-thumb-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .video-thumb-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+  }
+
+  .video-thumb-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cream);
+  }
+
+  .video-thumb-sub {
+    font-size: 13px;
+    color: rgba(245,240,232,0.5);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .feature-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.75rem;
+    border: 1px solid rgba(27, 67, 50, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(27, 67, 50, 0.08); }
+
+  .feature-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(27, 67, 50, 0.08);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .feature-icon svg { width: 22px; height: 22px; stroke: var(--green); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  .feature-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--green);
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .screenshots-section {
+    background: var(--green);
+    padding: 5rem 2rem;
+    overflow: hidden;
+  }
+
+  .screenshots-section .section-title { color: var(--cream); }
+  .screenshots-section .section-sub { color: rgba(245,240,232,0.65); }
+
+  .screenshots-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .screenshots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .screenshot-card {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(184, 150, 46, 0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .screenshot-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+
+  .screenshot-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .screenshot-card-label {
+    background: rgba(0,0,0,0.4);
+    padding: 0.6rem 1rem;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+  }
+
+  .screenshot-wide {
+    grid-column: 1 / -1;
+  }
+
+  .pricing-section {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: var(--green);
+  }
+
+  .pricing-section .section-title { color: var(--cream); margin-bottom: 0.5rem; }
+  .pricing-section .section-eyebrow { color: var(--gold); }
+  .pricing-section .section-sub { color: rgba(245,240,232,0.65); margin: 0 auto 3rem; }
+
+  .pricing-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(184, 150, 46, 0.25);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .pricing-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .pricing-period {
+    font-size: 14px;
+    color: rgba(245,240,232,0.5);
+    margin-bottom: 2rem;
+  }
+
+  .pricing-features {
+    list-style: none;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .pricing-features li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: rgba(245,240,232,0.8);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .pricing-features li:last-child { border-bottom: none; }
+
+  .pricing-features li svg { width: 16px; height: 16px; stroke: var(--gold); flex-shrink: 0; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .privacy-strip {
+    background: var(--cream-dark);
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .privacy-strip-inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .privacy-strip h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--green);
+    margin-bottom: 0.75rem;
+  }
+
+  .privacy-strip p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .privacy-pills {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .privacy-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border: 1px solid rgba(27,67,50,0.1);
+    border-radius: 100px;
+    padding: 0.4rem 1rem;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 500;
+  }
+
+  .privacy-pill svg { width: 14px; height: 14px; stroke: var(--green-light); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  footer {
+    background: var(--text-dark);
+    padding: 2rem;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(245,240,232,0.35);
+  }
+
+  footer a { color: rgba(245,240,232,0.5); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+
+  @media (max-width: 600px) {
+    nav { padding: 0.85rem 1.25rem; }
+    section { padding: 4rem 1.25rem; }
+    .hero-actions { flex-direction: column; align-items: center; }
+    .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#F5F0E8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3,17 8,10 13,14 21,4"/>
+        <polyline points="17,4 21,4 21,8"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Net Worth Tracker</span>
+  </a>
+  <a href="https://play.google.com/store/apps/details?id=com.bcheadholding.networthtracker" class="nav-cta" target="_blank" rel="noopener">Get it on Android</a>
+</nav>
+
+<hero>
+  <svg class="hero-bg-lines" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <path d="M0,600 Q300,400 600,500 T1200,300" stroke="#B8962E" stroke-width="1" fill="none"/>
+    <path d="M0,650 Q300,450 600,550 T1200,350" stroke="#B8962E" stroke-width="0.5" fill="none"/>
+    <path d="M0,700 Q300,500 600,600 T1200,400" stroke="#B8962E" stroke-width="0.5" fill="none"/>
+    <circle cx="950" cy="150" r="200" stroke="#B8962E" stroke-width="0.5" fill="none"/>
+    <circle cx="950" cy="150" r="250" stroke="#B8962E" stroke-width="0.3" fill="none"/>
+  </svg>
+
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      Android · One-time purchase · No subscription
+    </div>
+    <h1>Your complete<br>financial picture,<br><em>always with you</em></h1>
+    <p class="hero-sub">Track stocks, crypto, real estate, and debt in one place. Real analytics beyond a balance — CAGR, projections, quarterly reports.</p>
+    <div class="hero-actions">
+      <a href="https://play.google.com/store/apps/details?id=com.bcheadholding.networthtracker" class="btn-primary" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.33.18.7.24 1.06.18L14.76 12 4.24.06c-.36-.06-.73 0-1.06.18C2.52.6 2.1 1.29 2.1 2.1v19.8c0 .81.42 1.5 1.08 1.86z"/><path d="M18.27 8.22l-2.58-1.47-3.27 3.27 3.27 3.27 2.61-1.49c.75-.42.75-1.14 0-1.58z"/><path d="M4.24.06L14.76 12 4.3 23.94l10.46-5.97z"/></svg>
+        Download on Google Play
+      </a>
+      <a href="#demo" class="btn-secondary">
+        Watch demo ↓
+      </a>
+    </div>
+    <div class="hero-badge">
+      <div class="hero-badge-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Local-first, your data stays private
+      </div>
+      <div class="hero-badge-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        €5 one-time, no hidden fees
+      </div>
+      <div class="hero-badge-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        Android · No account needed
+      </div>
+    </div>
+  </div>
+</hero>
+
+<div class="video-section" id="demo">
+  <div class="video-section-inner">
+    <div class="section-eyebrow">See it in action</div>
+    <h2 class="section-title" style="color: var(--cream); font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 0.75rem;">Two minutes to your<br>complete net worth</h2>
+    <p class="section-sub">See how quickly you can set up assets, connect live prices, and get real insight into your financial trajectory.</p>
+    <a href="https://www.youtube.com/shorts/bSH930hiBBY" target="_blank" rel="noopener" class="video-thumb-link">
+      <div class="video-thumb">
+        <div class="video-thumb-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <div class="video-thumb-text">
+          <span class="video-thumb-label">Watch the demo on YouTube</span>
+          <span class="video-thumb-sub">Opens on YouTube · ~40 seconds</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<section>
+  <div class="section-eyebrow">Features</div>
+  <h2 class="section-title">Built for the full picture,<br>not just your portfolio</h2>
+  <p class="section-sub">Most trackers only handle investments. This one handles your complete financial life — assets and debts together.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <h3>Complete net worth</h3>
+      <p>Stocks, ETFs, crypto, real estate, cash, hybrid loans, and private equity — all tracked together with your debts for a true net worth figure.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>Live prices</h3>
+      <p>Real-time stock and ETF prices via Finnhub (free API key, no card needed) and crypto prices via CoinGecko. Always up to date.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <h3>Real analytics</h3>
+      <p>CAGR, time-to-double projections, best and worst performer breakdowns, historical quarter comparisons. Know if your money is actually working.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <h3>Quarterly PDF reports</h3>
+      <p>Automatic quarterly snapshots with PDF export. Track your performance quarter by quarter with a full breakdown of what moved your net worth.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <h3>Robinhood import</h3>
+      <p>Import your Robinhood portfolio via CSV. Get your existing positions loaded instantly without manual entry.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Privacy first</h3>
+      <p>Everything stays on your device. Optional Google Drive backup. No account required, no data sent to any server — ever.</p>
+    </div>
+  </div>
+</section>
+
+<div class="screenshots-section">
+  <div class="screenshots-inner">
+    <div class="section-eyebrow">App screens</div>
+    <h2 class="section-title">Everything at a glance</h2>
+    <p class="section-sub">Clean, dark-first design with light mode support. Every number that matters, always visible.</p>
+
+    <div class="screenshots-grid">
+
+      <div class="screenshot-card">
+        <img src="https://images.squarespace-cdn.com/content/6a0cd48a013d0a45c87020a7/1ea87663-023b-4b98-904f-f253b72438eb/product_hunt1.png?content-type=image%2Fpng" alt="Net Worth Tracker dashboard showing total net worth, assets, debts and best/worst performers" loading="lazy">
+        <div class="screenshot-card-label">Dashboard</div>
+      </div>
+
+      <div class="screenshot-card">
+        <img src="https://images.squarespace-cdn.com/content/6a0cd48a013d0a45c87020a7/4de47f0b-18e6-4aaa-b3f3-2271afa53811/product_hunt3.png?content-type=image%2Fpng" alt="Net Worth Tracker asset list showing stocks with unrealised gains and losses" loading="lazy">
+        <div class="screenshot-card-label">Asset detail</div>
+      </div>
+
+      <div class="screenshot-card">
+        <img src="https://images.squarespace-cdn.com/content/6a0cd48a013d0a45c87020a7/b4f48079-5d5b-47d3-8584-8d0070882ec2/product_hunt4.png?content-type=image%2Fpng" alt="Net Worth Tracker net worth history chart with CAGR and asset allocation" loading="lazy">
+        <div class="screenshot-card-label">Net worth history</div>
+      </div>
+
+      <div class="screenshot-card">
+        <img src="https://images.squarespace-cdn.com/content/6a0cd48a013d0a45c87020a7/bf08463a-24bd-4f22-a6f8-42d958b2053d/product_hunt2.png?content-type=image%2Fpng" alt="Net Worth Tracker quarterly report showing asset performance breakdown" loading="lazy">
+        <div class="screenshot-card-label">Quarterly report</div>
+      </div>
+
+      <div class="screenshot-card screenshot-wide">
+        <img src="https://images.squarespace-cdn.com/content/6a0cd48a013d0a45c87020a7/ff35cc89-0d1a-48d5-babe-9153c373cbce/ChatGPT+Image+Jun+15%2C+2026%2C+11_17_27+PM.png?content-type=image%2Fpng" alt="Net Worth Tracker feature overview showing assets and debts tracking, real-time prices, performance insights and quarterly reports" loading="lazy">
+        <div class="screenshot-card-label">Full feature overview</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="privacy-strip">
+  <div class="privacy-strip-inner">
+    <h2>Your finances stay yours</h2>
+    <p>Net Worth Tracker is built on a simple principle: your financial data belongs on your device, not on a server. No account required, no data collection, no ads — ever.</p>
+    <div class="privacy-pills">
+      <div class="privacy-pill">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Local-first storage
+      </div>
+      <div class="privacy-pill">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        No account needed
+      </div>
+      <div class="privacy-pill">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Google Drive backup
+      </div>
+      <div class="privacy-pill">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        Zero ads
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pricing-section">
+  <div class="section-eyebrow">Pricing</div>
+  <h2 class="section-title" style="color:var(--cream);font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:0.75rem;">Simple, honest pricing</h2>
+  <p class="section-sub" style="color:rgba(245,240,232,0.65);max-width:480px;margin:0 auto 3rem;">No subscription, no upsells. Pay once and own the app — including all future updates.</p>
+
+  <div class="pricing-card">
+    <div class="pricing-amount">€5</div>
+    <div class="pricing-period">one-time purchase · no subscription</div>
+    <ul class="pricing-features">
+      <li>
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Live stock, ETF & crypto prices
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        CAGR, projections & analytics
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Quarterly reports with PDF export
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Robinhood CSV import
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Google Drive backup
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Multi-currency support
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Light, dark & system themes
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        All future updates included
+      </li>
+    </ul>
+    <a href="https://play.google.com/store/apps/details?id=com.bcheadholding.networthtracker" class="btn-primary" style="width:100%;justify-content:center;" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M3.18 23.76c.33.18.7.24 1.06.18L14.76 12 4.24.06c-.36-.06-.73 0-1.06.18C2.52.6 2.1 1.29 2.1 2.1v19.8c0 .81.42 1.5 1.08 1.86z"/><path d="M18.27 8.22l-2.58-1.47-3.27 3.27 3.27 3.27 2.61-1.49c.75-.42.75-1.14 0-1.58z"/><path d="M4.24.06L14.76 12 4.3 23.94l10.46-5.97z"/></svg>
+      Download on Google Play
+    </a>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 BC Head Holding · <a href="#">Privacy Policy</a> · Built by a solo developer in Finland 🇫🇮</p>
+</footer>
+
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+</script>
+
+</body>
+</html>
