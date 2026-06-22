@@ -1083,7 +1083,7 @@
 const PROMO_API = 'https://script.google.com/macros/s/AKfycbz0qvvd7pSOXnZIFvPDGDkd0mvkb3DM8KyKlBw9YLRBWSUPfPLKdfVxhbRXEMe6H9Y/exec';
 let claimedCode = null;
 
-async function claimCode() {
+function claimCode() {
   const btn = document.getElementById('promo-btn');
   const result = document.getElementById('promo-result');
   const error = document.getElementById('promo-error');
@@ -1093,9 +1093,13 @@ async function claimCode() {
   btn.textContent = 'Claiming...';
   error.classList.remove('visible');
 
-  try {
-    const res = await fetch(PROMO_API);
-    const data = await res.json();
+  // Use script tag injection to avoid CORS issues with Google Apps Script
+  const callbackName = 'promoCallback_' + Date.now();
+  const script = document.createElement('script');
+
+  window[callbackName] = function(data) {
+    document.head.removeChild(script);
+    delete window[callbackName];
 
     if (data.success) {
       claimedCode = data.code;
@@ -1113,12 +1117,32 @@ async function claimCode() {
       btn.disabled = false;
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Try again';
     }
-  } catch (err) {
+  };
+
+  // Timeout if no response in 10 seconds
+  const timeout = setTimeout(() => {
+    if (window[callbackName]) {
+      document.head.removeChild(script);
+      delete window[callbackName];
+      error.textContent = 'Connection error. Please try again.';
+      error.classList.add('visible');
+      btn.disabled = false;
+      btn.textContent = 'Claim your free code';
+    }
+  }, 10000);
+
+  script.onerror = function() {
+    clearTimeout(timeout);
+    document.head.removeChild(script);
+    delete window[callbackName];
     error.textContent = 'Connection error. Please try again.';
     error.classList.add('visible');
     btn.disabled = false;
-    btn.textContent = 'Try again';
-  }
+    btn.textContent = 'Claim your free code';
+  };
+
+  script.src = PROMO_API + '?callback=' + callbackName;
+  document.head.appendChild(script);
 }
 
 function copyCode() {
