@@ -671,6 +671,124 @@
     border: 1px solid rgba(184,150,46,0.3);
     white-space: nowrap;
   }
+
+  .promo-section {
+    background: var(--cream-dark);
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .promo-inner {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .promo-inner .section-eyebrow { color: var(--gold); }
+
+  .promo-inner h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  .promo-inner p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .promo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--green);
+    color: var(--cream);
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .promo-btn:hover { background: var(--green-mid); transform: translateY(-1px); }
+  .promo-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .promo-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .promo-result {
+    display: none;
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid rgba(27,67,50,0.12);
+  }
+
+  .promo-result.visible { display: block; }
+
+  .promo-result-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .promo-code-display {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+    font-family: monospace;
+  }
+
+  .promo-instructions {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .promo-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid rgba(27,67,50,0.2);
+    border-radius: 6px;
+    padding: 0.35rem 0.85rem;
+    font-size: 12px;
+    color: var(--green);
+    cursor: pointer;
+    margin-top: 0.75rem;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+  }
+
+  .promo-copy-btn:hover { background: rgba(27,67,50,0.05); }
+
+  .promo-error {
+    margin-top: 1rem;
+    font-size: 13px;
+    color: var(--red);
+    display: none;
+  }
+
+  .promo-error.visible { display: block; }
+
+  .promo-remaining {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1rem;
+  }
 </style>
 </head>
 <body>
@@ -729,6 +847,43 @@
     </div>
   </div>
 </hero>
+
+<div class="promo-section">
+  <div class="promo-inner">
+    <div class="section-eyebrow">Limited offer</div>
+    <h2>Try it free — first 10 users</h2>
+    <p>Get a free download code in exchange for an honest review. Codes are limited — one per person, while they last.</p>
+
+    <button class="promo-btn" id="promo-btn" onclick="claimCode()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 12 20 22 4 22 4 12"/>
+        <rect x="2" y="7" width="20" height="5"/>
+        <line x1="12" y1="22" x2="12" y2="7"/>
+        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+      </svg>
+      Claim your free code
+    </button>
+
+    <div class="promo-result" id="promo-result">
+      <div class="promo-result-label">Your promo code</div>
+      <div class="promo-code-display" id="promo-code"></div>
+      <button class="promo-copy-btn" onclick="copyCode()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy code
+      </button>
+      <div class="promo-instructions">
+        To redeem: open Google Play → search "Net Worth Tracker" → tap the price → enter this code at checkout.<br>
+        In exchange, we'd love an honest review — good or bad!
+      </div>
+    </div>
+
+    <div class="promo-error" id="promo-error"></div>
+    <div class="promo-remaining" id="promo-remaining"></div>
+  </div>
+</div>
+
+
 
 <div class="video-section" id="demo">
   <div class="video-section-inner">
@@ -924,6 +1079,59 @@
 </footer>
 
 <script>
+
+const PROMO_API = 'https://script.google.com/macros/s/AKfycbz0qvvd7pSOXnZIFvPDGDkd0mvkb3DM8KyKlBw9YLRBWSUPfPLKdfVxhbRXEMe6H9Y/exec';
+let claimedCode = null;
+
+async function claimCode() {
+  const btn = document.getElementById('promo-btn');
+  const result = document.getElementById('promo-result');
+  const error = document.getElementById('promo-error');
+  const remaining = document.getElementById('promo-remaining');
+
+  btn.disabled = true;
+  btn.textContent = 'Claiming...';
+  error.classList.remove('visible');
+
+  try {
+    const res = await fetch(PROMO_API);
+    const data = await res.json();
+
+    if (data.success) {
+      claimedCode = data.code;
+      document.getElementById('promo-code').textContent = data.code;
+      result.classList.add('visible');
+      btn.style.display = 'none';
+      if (data.remaining !== undefined) {
+        remaining.textContent = data.remaining + ' code' + (data.remaining !== 1 ? 's' : '') + ' remaining';
+      }
+    } else {
+      error.textContent = data.message === 'No codes remaining'
+        ? 'Sorry — all free codes have been claimed. Get it on Google Play for €5.'
+        : 'Something went wrong. Please try again.';
+      error.classList.add('visible');
+      btn.disabled = false;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg> Try again';
+    }
+  } catch (err) {
+    error.textContent = 'Connection error. Please try again.';
+    error.classList.add('visible');
+    btn.disabled = false;
+    btn.textContent = 'Try again';
+  }
+}
+
+function copyCode() {
+  if (!claimedCode) return;
+  navigator.clipboard.writeText(claimedCode).then(() => {
+    const copyBtn = document.querySelector('.promo-copy-btn');
+    copyBtn.textContent = '✓ Copied!';
+    setTimeout(() => {
+      copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy code';
+    }, 2000);
+  });
+}
+
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const target = document.querySelector(a.getAttribute('href'));
